@@ -10,13 +10,15 @@
 - Emulator (such as [Emulicious](https://emulicious.net/))
 
 ### How to Build
-1. Clone the repo
+1. **Clone the repo**
 ```sh
 git clone https://github.com/potatoSalad21/Re-Bricked
 cd Re-Bricked
 ```
-2. Build the game
+2. **Build the game**
 ```sh
 make build
 ```
-3. Run the gb file in your emulator
+3. **Run the gb file in your emulator**
+
+and done!
