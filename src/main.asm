@@ -92,6 +92,39 @@ WaitVBlank2:
     ld [_OAMRAM + 1], a
     jp GameLoop
 
+TakeInput:
+    ld a, P1F_GET_BTN   ; polling
+    call .nibble
+    ld b, a
+
+    ld a, P1F_GET_DPAD
+    call .nibble
+    swap a
+    xor a, b
+    ld b, a
+
+    ld a, P1F_GET_NONE  ; controller released
+    ldh [rP1], a
+
+    ld a, [wCurKeys]
+    xor a, b    ; a -> keys that changed state
+    and a, b    ; a -> keys that changed to pressed
+    ld [wNewKeys], a
+    ld a, b
+    ld [wCurKeys], a
+    ret
+
+.nibble:
+    ldh [rP1], a
+    call .burnret   ; burn 10 cycles (not sure why but needs to be here)
+    ldh a, [rP1]
+    ldh a, [rP1]
+    ldh a, [rP1]    ; key matrix settled
+    or a, $F0
+
+.burnret:
+    ret
+
 ; @param de: src
 ; @param hl: dest
 ; @param bc: length
