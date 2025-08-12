@@ -98,6 +98,18 @@ WaitVBlank2:
     cp 144
     jp c, WaitVBlank2
 
+    ld a, [wFrameCounter]
+    inc a
+    ld [wFrameCounter], a
+
+    cp a, 15
+    jp nz, GameLoop
+
+    ; reset frame count
+    ld a, 0
+    ld [wFrameCounter], a
+
+    ; move paddle
     ld a, [_OAMRAM + 1]
     inc a
     ld [_OAMRAM + 1], a
