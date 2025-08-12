@@ -47,6 +47,40 @@ CopyTilemap:
     ld a, %11100100
     ld [rBGP], a
 
+    ld a, 0
+    ld b, 160
+    ld hl, _OAMRAM
+
+    ; draw paddle tile
+    ld de, Padle
+    ld hl, $8000
+    ld bc, PadleEnd - Padle
+
+CopyPaddle:
+    ld a, [de]
+    ld [hl+], a
+    dec bc
+    inc de
+    ld a, b
+    or a, c
+    jp nz, CopyPaddle
+
+ClearOam:
+    ld [hl+], a
+    dec b
+    jp nz, ClearOam
+
+    ; drawing the obj
+    ld hl, _OAMRAM
+    ld a, 128+16    ; Y
+    ld [hl+], a
+    ld a, 16+8      ; X
+    ld [hl+], a
+    ld a, 0
+    ; obj ID and attributes set to 0
+    ld [hl+], a
+    ld [hl+], a
+
 EndLoop:
     jp EndLoop
 
@@ -308,4 +342,15 @@ Tilemap:
 	db $04, $08, $08, $08, $08, $08, $08, $08, $08, $08, $08, $08, $08, $07, $03, $16, $17, $18, $19, $03, 0,0,0,0,0,0,0,0,0,0,0,0
 	db $04, $09, $09, $09, $09, $09, $09, $09, $09, $09, $09, $09, $09, $07, $03, $03, $03, $03, $03, $03, 0,0,0,0,0,0,0,0,0,0,0,0
 TilemapEnd:
+
+Paddle:
+    dw `13333331
+    dw `30000003
+    dw `13333331
+    dw `00000000
+    dw `00000000
+    dw `00000000
+    dw `00000000
+    dw `00000000
+PaddleEnd:
 
