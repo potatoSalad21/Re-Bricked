@@ -2,8 +2,7 @@ INCLUDE "./include/hardware.inc"
 
 SECTION "Header", ROM0[$100]
     jp EntryPoint
-    ; leave space for the header
-    ds $150 - @, 0
+    ds $150 - @, 0  ; leave space for the header
 
 EntryPoint:
 
@@ -66,6 +65,12 @@ ClearOam:
     ld a, %11100100
     ld [rOBP0], a
 
+    ; init global vars
+    ld a, 0
+    ld [wFrameCounter], a
+    ld [wCurKeys], a
+    ld [wNewKeys], a
+
 GameLoop:
     ld a, [rLY]
     cp 144
@@ -75,20 +80,32 @@ WaitVBlank2:
     cp 144
     jp c, WaitVBlank2
 
-    ld a, [wFrameCounter]
-    inc a
-    ld [wFrameCounter], a
+    call TakeInput
+    ; check pressed buttons
 
-    cp a, 15
-    jp nz, GameLoop
+CheckLeft:
+    ld a, [wCurKeys]
+    and a, PADF_LEFT
+    jp z, CheckRight
+Left:
+    ld a, [_OAMRAM + 1]
+    dec a
+    cp a, 15    ; check bounds
+    jp z, GameLoop
 
-    ; reset frame count
-    ld a, 0
-    ld [wFrameCounter], a
+    ld [_OAMRAM + 1], a     ; move left
+    jp GameLoop
 
-    ; move paddle
+CheckRight:
+    ld a, [wCurKeys]
+    and a, PADF_RIGHT
+    jp z, GameLoop
+Right:
     ld a, [_OAMRAM + 1]
     inc a
+    cp a, 105   ; check bounds
+    jp z, GameLoop
+
     ld [_OAMRAM + 1], a
     jp GameLoop
 
@@ -409,4 +426,8 @@ Paddle:
 PaddleEnd:
 
 SECTION "Counter", WRAM0
-wFrameCounter: db   ; stored in ram
+wFrameCounter: db   ; reserve 1 byte (in ram)
+
+SECTION "IOVars", WRAM0
+wCurKeys: db
+wNewKeys: db
