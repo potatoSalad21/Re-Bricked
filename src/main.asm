@@ -52,9 +52,9 @@ CopyTilemap:
     ld hl, _OAMRAM
 
     ; draw paddle tile
-    ld de, Padle
+    ld de, Paddle
     ld hl, $8000
-    ld bc, PadleEnd - Padle
+    ld bc, PaddleEnd - Paddle
 
 CopyPaddle:
     ld a, [de]
@@ -80,6 +80,14 @@ ClearOam:
     ; obj ID and attributes set to 0
     ld [hl+], a
     ld [hl+], a
+
+    ld a, LCDCF_ON | LCDCF_BGON | LCDCF_OBJON
+    ld [rLCDC], a
+    ; init display registers
+    ld a, %11100100
+    ld [rBGP], a
+    ld a, %11100100
+    ld [rOBP0], a
 
 EndLoop:
     jp EndLoop
