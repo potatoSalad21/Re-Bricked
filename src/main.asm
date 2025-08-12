@@ -89,8 +89,20 @@ ClearOam:
     ld a, %11100100
     ld [rOBP0], a
 
-EndLoop:
-    jp EndLoop
+GameLoop:
+    ld a, [rLY]
+    cp 144
+    jp nc, GameLoop ; wait till screen is not blank
+WaitVBlank2:
+    ld a, [rLY]
+    cp 144
+    jp c, WaitVBlank2
+
+    ld a, [_OAMRAM + 1]
+    inc a
+    ld [_OAMRAM + 1], a
+    jp GameLoop
+
 
 Tiles:
     ;; premade tiles
@@ -362,3 +374,5 @@ Paddle:
     dw `00000000
 PaddleEnd:
 
+SECTION "Counter", WRAM0
+wFrameCounter: db   ; stored in ram
