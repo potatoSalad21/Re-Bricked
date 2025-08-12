@@ -14,32 +14,17 @@ WaitVBlank:
     ld a, 0
     ld [rLCDC], a
 
+    ; copy tiles
     ld de, Tiles
     ld hl, $9000
     ld bc, TilesEnd - Tiles
+    call Memcpy
 
-CopyTiles:
-    ld a, [de]
-    ld [hl+], a
-    inc de
-    dec bc
-    ; check if bc == 0
-    ld a, b
-    or a, c
-    jp nz, CopyTiles
-
+    ; copy tilemap
     ld de, Tilemap
     ld hl, $9800
     ld bc, TilemapEnd - Tilemap
-
-CopyTilemap:
-    ld a, [de]
-    ld [hl+], a
-    inc de
-    dec bc
-    ld a, b
-    or a, c
-    jp nz, CopyTilemap
+    call Memcpy
 
     ld a, LCDCF_ON | LCDCF_BGON
     ld [rLCDC], a
@@ -55,15 +40,7 @@ CopyTilemap:
     ld de, Paddle
     ld hl, $8000
     ld bc, PaddleEnd - Paddle
-
-CopyPaddle:
-    ld a, [de]
-    ld [hl+], a
-    dec bc
-    inc de
-    ld a, b
-    or a, c
-    jp nz, CopyPaddle
+    call Memcpy
 
 ClearOam:
     ld [hl+], a
@@ -115,6 +92,18 @@ WaitVBlank2:
     ld [_OAMRAM + 1], a
     jp GameLoop
 
+; @param de: src
+; @param hl: dest
+; @param bc: length
+Memcpy:
+    ld a, [de]
+    ld [hl+], a
+    dec bc
+    inc de
+    ld a, b
+    or a, c
+    jp nz, Memcpy
+    ret
 
 Tiles:
     ;; premade tiles
