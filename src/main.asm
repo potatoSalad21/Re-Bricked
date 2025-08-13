@@ -25,28 +25,28 @@ WaitVBlank:
     ld bc, TilemapEnd - Tilemap
     call Memcpy
 
-    ld a, LCDCF_ON | LCDCF_BGON
-    ld [rLCDC], a
-    ; init display registers
-    ld a, %11100100
-    ld [rBGP], a
-
-    ld a, 0
-    ld b, 160
-    ld hl, _OAMRAM
-
     ; draw paddle tile
     ld de, Paddle
     ld hl, $8000
     ld bc, PaddleEnd - Paddle
     call Memcpy
 
+    ;ld a, LCDCF_ON | LCDCF_BGON
+    ;ld [rLCDC], a
+    ;; init display registers
+    ;ld a, %11100100
+    ;ld [rBGP], a
+
+    ld a, 0
+    ld b, 160
+    ld hl, _OAMRAM
+
 ClearOam:
     ld [hl+], a
     dec b
     jp nz, ClearOam
 
-    ; drawing the obj
+    ;; init obj
     ld hl, _OAMRAM
     ld a, 128+16    ; Y
     ld [hl+], a
@@ -57,6 +57,7 @@ ClearOam:
     ld [hl+], a
     ld [hl+], a
 
+    ;; turn LCD on
     ld a, LCDCF_ON | LCDCF_BGON | LCDCF_OBJON
     ld [rLCDC], a
     ; init display registers
@@ -65,7 +66,7 @@ ClearOam:
     ld a, %11100100
     ld [rOBP0], a
 
-    ; init global vars
+    ;; init global vars
     ld a, 0
     ld [wFrameCounter], a
     ld [wCurKeys], a
@@ -142,6 +143,7 @@ TakeInput:
 .burnret:
     ret
 
+; func for copying memory
 ; @param de: src
 ; @param hl: dest
 ; @param bc: length
