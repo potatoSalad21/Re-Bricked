@@ -31,11 +31,11 @@ WaitVBlank:
     ld bc, PaddleEnd - Paddle
     call Memcpy
 
-    ;ld a, LCDCF_ON | LCDCF_BGON
-    ;ld [rLCDC], a
-    ;; init display registers
-    ;ld a, %11100100
-    ;ld [rBGP], a
+    ; draw ball tile
+    ld de, Ball
+    ld hl, $8010
+    ld bc, BallEnd - Ball
+    call Memcpy
 
     ld a, 0
     ld b, 160
@@ -46,7 +46,7 @@ ClearOam:
     dec b
     jp nz, ClearOam
 
-    ;; init obj
+    ;; init paddle obj
     ld hl, _OAMRAM
     ld a, 128+16    ; Y
     ld [hl+], a
@@ -55,6 +55,16 @@ ClearOam:
     ld a, 0
     ; obj ID and attributes set to 0
     ld [hl+], a
+    ld [hl+], a
+
+    ;; init ball obj
+    ld a, 100 + 16    ; Y
+    ld [hl+], a
+    ld a, 32 + 8    ; X
+    ld [hl+], a
+    ld a, 1     ; ID
+    ld [hl+], a
+    ld a, 0     ; Attributes
     ld [hl+], a
 
     ;; turn LCD on
@@ -71,6 +81,10 @@ ClearOam:
     ld [wFrameCounter], a
     ld [wCurKeys], a
     ld [wNewKeys], a
+    ld a, 1
+    ld [wBalldx], a
+    ld a, -1
+    ld [wBalldy], a
 
 GameLoop:
     ld a, [rLY]
@@ -143,7 +157,7 @@ TakeInput:
 .burnret:
     ret
 
-; func for copying memory
+; Func for copying memory
 ; @param de: src
 ; @param hl: dest
 ; @param bc: length
@@ -427,9 +441,25 @@ Paddle:
     dw `00000000
 PaddleEnd:
 
+Ball:
+    dw `00033000
+    dw `00322300
+    dw `03222230
+    dw `03222230
+    dw `00322300
+    dw `00033000
+    dw `00000000
+    dw `00000000
+BallEnd:
+
+;; GLOBALS
 SECTION "Counter", WRAM0
 wFrameCounter: db   ; reserve 1 byte (in ram)
 
-SECTION "IOVars", WRAM0
+SECTION "IO Vars", WRAM0
 wCurKeys: db
 wNewKeys: db
+
+SECTION "Ball Vars", WRAM0
+wBalldx: db
+wBalldy: db
