@@ -110,10 +110,61 @@ WaitVBlank2:
 
 BounceTop:
     ; in gb (8, 16) is (0, 0) on screen!
-    ld a, [_OAMRAM + 4]
+    ld a, [_OAMRAM + 4]     ; Y
     sub a, 16 + 1
     ld c, a
+    ld a, [_OAMRAM + 5]     ; X
+    sub a, 8
+    ld b, a
+    call GetTileByPx    ; hl = tile addr
+    ld a, [hl]
+    call IsWallTile
+    jp nz, BounceRight
+    ld a, 1
+    ld [wBalldy], a
+
+BounceRight:
+    ld a, [_OAMRAM + 4]
+    sub a, 16
+    ld c, a
     ld a, [_OAMRAM + 5]
+    sub a, 8 - 1
+    ld b, a
+    call GetTileByPx
+    ld a, [hl]
+    call IsWallTile
+    jp nz, BounceLeft
+    ld a, -1
+    ld [wBalldx], a
+
+BounceLeft:
+    ld a, [_OAMRAM + 4]
+    sub a, 16
+    ld c, a
+    ld a, [_OAMRAM + 5]
+    sub a, 8 + 1
+    ld b, a
+    call GetTileByPx
+    ld a, [hl]
+    call IsWallTile
+    jp nz, BounceBottom
+    ld a, 1
+    ld [wBalldx], a
+
+BounceBottom:
+    ld a, [_OAMRAM + 4]
+    sub a, 16 - 1
+    ld c, a
+    ld a, [_OAMRAM + 5]
+    sub a, 8
+    ld b, a
+    call GetTileByPx
+    ld a, [hl]
+    call IsWallTile
+    jp nz, BounceDone
+    ld a, -1
+    ld [wBalldy], a
+BounceDone:
 
     ;; check pressed buttons
     call TakeInput
