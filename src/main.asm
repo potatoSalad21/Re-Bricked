@@ -108,6 +108,7 @@ WaitVBlank2:
     add a, b
     ld [_OAMRAM + 4], a
 
+    ;; collision system for walls
 BounceTop:
     ; in gb (8, 16) is (0, 0) on screen!
     ld a, [_OAMRAM + 4]     ; Y
@@ -165,6 +166,29 @@ BounceBottom:
     ld a, -1
     ld [wBalldy], a
 BounceDone:
+
+    ;; collision for the paddle
+    ; cmp Y positions of objs
+    ld a, [_OAMRAM]     ; Paddle Y
+    ld b, a
+    ld a, [_OAMRAM + 4] ; Paddle X
+    cp a, b
+    jp nz, PaddleHitDone
+    ; cmp X positions of objs
+    ld a, [_OAMRAM + 5]     ; Paddle X
+    ld b, a
+    ld a, [_OAMRAM + 1]     ; Ball X
+    sub a, 8
+    cp a, b
+    jp nc, PaddleHitDone
+    add a, 8 + 16
+    cp a, b
+    jp c, PaddleHitDone
+
+    ld a, -1
+    ld [wBalldy], a
+PaddleHitDone:
+
 
     ;; check pressed buttons
     call TakeInput
