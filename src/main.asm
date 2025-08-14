@@ -108,6 +108,13 @@ WaitVBlank2:
     add a, b
     ld [_OAMRAM + 4], a
 
+BounceTop:
+    ; in gb (8, 16) is (0, 0) on screen!
+    ld a, [_OAMRAM + 4]
+    sub a, 16 + 1
+    ld c, a
+    ld a, [_OAMRAM + 5]
+
     ;; check pressed buttons
     call TakeInput
 
@@ -182,6 +189,57 @@ Memcpy:
     ld a, b
     or a, c
     jp nz, Memcpy
+    ret
+
+; Function for converting a pixel to tilemap addr
+; hl = $9800 + X + Y*32
+; @param b: X
+; @param c: Y
+; @return hl: Tile Address
+GetTileByPx:
+    ; mask the Y position
+    ld a, c
+    and a, %11111000
+    ld l, a
+    ld h, 0
+    ; hl has pos * 8 now
+    add hl, hl      ; pos * 16
+    add hl, hl      ; pos * 32
+    ; convert X to an offset
+    ld a, b
+    srl a       ; a / 2
+    srl a
+    srl a       ; a / 8
+    ; add two offsets
+    add a, l
+    ld l, a
+    adc a, h
+    sub a, l
+    ld h, a
+    ; add the offset to tilemap's base addr
+    ld bc, $9800
+    add hl, bc
+    ret
+
+; @param a: tile ID
+; @return z: set if true
+IsWallTile:
+    ; check all wall tile IDs
+    cp a, $00
+    ret z
+    cp a, $01
+    ret z
+    cp a, $02
+    ret z
+    cp a, $04
+    ret z
+    cp a, $05
+    ret z
+    cp a, $06
+    ret z
+    cp a, $07
+    ret z
+
     ret
 
 Tiles:
