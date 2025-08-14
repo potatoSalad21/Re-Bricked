@@ -95,8 +95,21 @@ WaitVBlank2:
     cp 144
     jp c, WaitVBlank2
 
+    ;; move the ball
+    ld a, [wBalldx]
+    ld b, a
+    ld a, [_OAMRAM + 5]
+    add a, b
+    ld [_OAMRAM + 5], a
+
+    ld a, [wBalldy]
+    ld b, a
+    ld a, [_OAMRAM + 4]
+    add a, b
+    ld [_OAMRAM + 4], a
+
+    ;; check pressed buttons
     call TakeInput
-    ; check pressed buttons
 
 CheckLeft:
     ld a, [wCurKeys]
@@ -157,7 +170,7 @@ TakeInput:
 .burnret:
     ret
 
-; Func for copying memory
+; Function for copying memory
 ; @param de: src
 ; @param hl: dest
 ; @param bc: length
