@@ -171,7 +171,8 @@ BounceDone:
     ; cmp Y positions of objs
     ld a, [_OAMRAM]     ; Paddle Y
     ld b, a
-    ld a, [_OAMRAM + 4] ; Paddle X
+    ld a, [_OAMRAM + 4] ; Ball Y
+    add a, 5
     cp a, b
     jp nz, PaddleHitDone
     ; cmp X positions of objs
@@ -188,7 +189,6 @@ BounceDone:
     ld a, -1
     ld [wBalldy], a
 PaddleHitDone:
-
 
     ;; check pressed buttons
     call TakeInput
