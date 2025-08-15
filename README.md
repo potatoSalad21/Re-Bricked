@@ -9,7 +9,7 @@
 - [RGBDS >v0.5.0](https://rgbds.gbdev.io/install)
 - Emulator (such as [Emulicious](https://emulicious.net/))
 
-### How to Build
+### How to Build and Run
 1. **Clone the repo**
 ```sh
 git clone https://github.com/potatoSalad21/Re-Bricked
