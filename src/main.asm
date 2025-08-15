@@ -1,5 +1,9 @@
 INCLUDE "./include/hardware.inc"
 
+DEF BRICK_LEFT EQU $05
+DEF BRICK_RIGHT EQU $06
+DEF BLANK_TILE EQU $08
+
 SECTION "Header", ROM0[$100]
     jp EntryPoint
     ds $150 - @, 0  ; leave space for the header
@@ -315,6 +319,24 @@ IsWallTile:
     cp a, $07
     ret z
 
+    ret
+
+; Function to handle brick collision
+; bricks are made of two tiles, need to clean up both of them
+; @param  hl: tile address
+HandleBrickColl:
+    ld a, [hl]
+    cp a, BRICK_LEFT
+    jr nz, HandleBrickRight
+    ld [hl], BLANK_TILE     ; if collided with left side
+    inc hl
+    ld [hl], BLANK_TILE
+HandleBrickRight:
+    cp a, BRICK_RIGHT
+    ret nz
+    ld [hl], BLANK_TILE     ; if collided with right side
+    dec hl
+    ld [hl], BLANK_TILE
     ret
 
 Tiles:
