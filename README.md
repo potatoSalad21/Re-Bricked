@@ -3,6 +3,8 @@
 ## Descrption
 'Re;Bricked' is a fun breakout game written entirely in GameBoy assembly for the sake of teaching myself low level programming. For example, how the data moves from CPU registers and RAM, how CPU translates instructions into action, and how the hardware is controlled.
 
+**Note**: game lacks the win/loss system for now.
+
 ### Requirements
 - POSIX environment
 - GNU make
