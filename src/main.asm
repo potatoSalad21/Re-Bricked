@@ -125,6 +125,7 @@ BounceTop:
     ld a, [hl]
     call IsWallTile
     jp nz, BounceRight
+    call HandleBrickColl
     ld a, 1
     ld [wBalldy], a
 
@@ -139,6 +140,7 @@ BounceRight:
     ld a, [hl]
     call IsWallTile
     jp nz, BounceLeft
+    call HandleBrickColl
     ld a, -1
     ld [wBalldx], a
 
@@ -153,6 +155,7 @@ BounceLeft:
     ld a, [hl]
     call IsWallTile
     jp nz, BounceBottom
+    call HandleBrickColl
     ld a, 1
     ld [wBalldx], a
 
@@ -167,6 +170,7 @@ BounceBottom:
     ld a, [hl]
     call IsWallTile
     jp nz, BounceDone
+    call HandleBrickColl
     ld a, -1
     ld [wBalldy], a
 BounceDone:
