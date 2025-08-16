@@ -28,3 +28,8 @@ make build
 3. **Run the gb file in your emulator**
 
 and done!
+
+#### Useful Resources
+- [GB ASM by example](https://github.com/daid/gameboy-assembly-by-example)
+- [RGBDS Docs](https://rgbds.gbdev.io/docs/v0.9.3)
+- [Pan Docs (gameboy tech reference)](https://gbdev.io/pandocs/)
