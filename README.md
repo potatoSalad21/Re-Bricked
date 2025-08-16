@@ -5,6 +5,10 @@
 
 **Note**: game lacks the win/loss system for now.
 
+## Showcase
+https://github.com/user-attachments/assets/aff6d6da-83fc-4b5b-8e36-4b29b7e79058
+
+
 ### Requirements
 - POSIX environment
 - GNU make
