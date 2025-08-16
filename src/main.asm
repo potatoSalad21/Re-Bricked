@@ -20,6 +20,11 @@ WaitVBlank:
     ld a, 0
     ld [rLCDC], a
 
+    ld a, 0
+    ld b, 40 * 4
+    ld hl, _OAMRAM
+    call ClearAllObjs
+
     ; copy tiles
     ld de, Tiles
     ld hl, $9000
@@ -45,13 +50,9 @@ WaitVBlank:
     call Memcpy
 
     ld a, 0
-    ld b, 160
+    ld b, 40 * 4
     ld hl, _OAMRAM
-
-ClearOam:
-    ld [hl+], a
-    dec b
-    jp nz, ClearOam
+    call ClearAllObjs
 
     ;; init paddle obj
     ld hl, _OAMRAM
@@ -176,8 +177,7 @@ BounceBottom:
     call IsWallTile
     jp nz, BounceDone
     call HandleBrickColl
-    ld a, -1
-    ld [wBalldy], a
+    jp nz, Death    ; ball hit the bottom wall
 BounceDone:
 
     ;; collision for the paddle
@@ -263,6 +263,19 @@ TakeInput:
     or a, $F0
 
 .burnret:
+    ret
+
+Death:
+    jp EntryPoint
+
+; Function to clear all objects
+; @param a: 0 value
+; @param b: OAM size
+; param hl: _OAMRAM
+ClearAllObjs:
+    ld [hl+], a
+    dec b
+    jp nz, ClearAllObjs
     ret
 
 ; Function for copying memory
