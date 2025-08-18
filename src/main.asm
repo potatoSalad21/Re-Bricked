@@ -177,7 +177,12 @@ BounceBottom:
     call IsWallTile
     jp nz, BounceDone
     call HandleBrickColl
-    jp nz, Death    ; ball hit the bottom wall
+    ; ball hit the floor - die
+    call IsBottomTile
+    jp z, DeathEvent
+    ; ball hit the top of a brick - bounce
+    ld a, -1
+    ld [wBalldy], a
 BounceDone:
 
     ;; collision for the paddle
@@ -265,7 +270,20 @@ TakeInput:
 .burnret:
     ret
 
-Death:
+
+; Function for checking if the ball hit the bottom
+; @param a: tile ID
+; @return z: set if tile ID matches floor tile's ID
+IsBottomTile:
+    cp a, $09
+    ret z
+    ret
+
+; TODO: display screen messages accordingly
+DeathEvent:
+    jp EntryPoint
+
+WinEvent:
     jp EntryPoint
 
 ; Function to clear all objects
@@ -340,7 +358,8 @@ IsWallTile:
     ret z
     cp a, $07
     ret z
-
+    cp a, $09
+    ret z
     ret
 
 ; Function to handle brick collision
@@ -373,6 +392,9 @@ IncScoreBCD:
     daa     ; convert to BCD
     ld [hl], a
     call UpdateScoreLabel
+    ld a, [wScore]
+    cp 33
+    jp z, WinEvent
     ret
 
 ; Function to read BCD score and update score label
