@@ -393,8 +393,8 @@ IncScoreBCD:
     ld [hl], a
     call UpdateScoreLabel
     ld a, [wScore]
-    cp 33
-    jp z, WinEvent
+    cp $33
+    jp nc, WinEvent
     ret
 
 ; Function to read BCD score and update score label
